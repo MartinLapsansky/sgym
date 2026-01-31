@@ -5,10 +5,13 @@ import nodemailer from "nodemailer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {prisma} from "@/lib/prisma";
+import { Resend } from "resend";
+
 
 export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
+    const resend = new Resend(process.env.RESEND_API_KEY)
     if (!session?.user?.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -27,17 +30,18 @@ export async function POST(req: NextRequest) {
         data: { token, email, expiresAt, createdById: session.user.id },
     });
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
-
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+    await resend.emails.send({
+        from: "S-GYM <no-reply@s-gym.sk>",
         to: email,
-        subject: "Pozvánka na registráciu - S-gym",
-        text: `Kliknite na tento link pre registráciu: ${process.env.NEXT_PUBLIC_SITE_URL}/auth/register-coach?token=${token}`,
+        subject: "Pozvánka do S-GYM",
+        html: `
+      <h2>Si pozvaný</h2>
+      <p>Klikni na link:</p>
+      <a href="https://s-gym.sk/invite/${token}">
+        Prijať pozvánku
+      </a>
+    `,
     });
 
-    return NextResponse.json({ message: "Pozvánka odoslaná." });
+    return NextResponse.json({ message: "Pozvánka odoslaná.", success: "true"});
 }

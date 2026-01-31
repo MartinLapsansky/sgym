@@ -196,24 +196,32 @@ export default function CustomerPage() {
   const packages = category === "GROUP" ? GROUP_PACKAGES : MINI_PACKAGES;
 
   return (
-    <div className="max-w-5xl mx-auto py-8 space-y-8 mt-40">
-      <h1 className="text-3xl font-bold text-center">Vytvoriť objednávku</h1>
+    <div
+      className="
+        mx-auto py-6 mt-32 space-y-6
+        px-3
+        max-w-[680px]
+        sm:px-4 sm:max-w-3xl
+        lg:py-8 lg:mt-40 lg:space-y-8 lg:max-w-5xl
+      "
+    >
+      <h1 className="text-2xl font-bold text-center sm:text-3xl">Vytvoriť objednávku</h1>
 
       <section className="space-y-3">
-        <p className="text-xl font-semibold">Vyber trénera</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p className="text-lg font-semibold sm:text-xl">Vyber trénera</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           {trainers.map((t) => (
             <button
               key={t.id}
               onClick={() => setTrainerId(t.id)}
-              className={`border rounded p-6 text-left hover:shadow transition ${
+              className={`border rounded-lg p-3 sm:p-4 text-left hover:shadow transition ${
                 trainerId === t.id ? "ring-2 ring-[var(--highlight)]" : ""
               }`}
             >
-              <div className="relative w-full h-50">
-                <Image src={t.photo} alt={t.name} fill className="object-cover rounded w-5 h-auto" />
+              <div className="relative w-full h-40 sm:h-48">
+                <Image src={t.photo} alt={t.name} fill className="object-cover rounded-md" />
               </div>
-              <div className="mt-2 font-medium">{t.name}</div>
+              <div className="mt-2 font-medium text-sm sm:text-base">{t.name}</div>
             </button>
           ))}
           {!trainers.length && <div>Žiadni tréneri.</div>}
@@ -221,27 +229,31 @@ export default function CustomerPage() {
       </section>
 
       <section className="space-y-2">
-        <p className="text-xl font-semibold">Meno</p>
+        <p className="text-lg font-semibold sm:text-xl">Meno</p>
         <input
           type="text"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           placeholder="Meno a priezvisko"
-          className="border rounded px-3 py-2 w-full"
+          className="border rounded px-3 py-2 w-full text-sm sm:text-base"
         />
       </section>
 
       <section className="space-y-2">
-        <p className="text-xl font-semibold">Typ skupiny</p>
-        <div className="flex gap-3">
+        <p className="text-lg font-semibold sm:text-xl">Typ skupiny</p>
+        <div className="flex gap-2 sm:gap-3">
           <button
-            className={`px-4 py-2 border rounded ${category === "GROUP" ? "bg-[var(--highlight)] text-black" : ""}`}
+            className={`px-3 py-2 border rounded text-sm sm:text-base ${
+              category === "GROUP" ? "bg-[var(--highlight)] text-black" : ""
+            }`}
             onClick={() => setCategory("GROUP")}
           >
             Veľké skupiny
           </button>
           <button
-            className={`px-4 py-2 border rounded ${category === "MINI" ? "bg-[var(--highlight)]" : ""}`}
+            className={`px-3 py-2 border rounded text-sm sm:text-base ${
+              category === "MINI" ? "bg-[var(--highlight)] text-black" : ""
+            }`}
             onClick={() => setCategory("MINI")}
           >
             Mini skupiny
@@ -249,23 +261,28 @@ export default function CustomerPage() {
         </div>
       </section>
 
-      <section className="space-y-4">
-        <p className="text-xl font-semibold">Balíčky – {category === "GROUP" ? "Veľké skupiny" : "Mini skupiny"}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="space-y-3 sm:space-y-4">
+        <p className="text-lg font-semibold sm:text-xl">
+          Balíčky – {category === "GROUP" ? "Veľké skupiny" : "Mini skupiny"}
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
           {packages.map((p) => {
             const isSelected = selectedPackage === p.key;
             const isOpen = expandedInfo === p.key;
             return (
-              <div key={p.key} className={`border rounded p-4 ${isSelected ? "ring-2 ring-[var(--highlight)]" : ""}`}>
-                <div className="flex justify-between items-start">
+              <div
+                key={p.key}
+                className={`border rounded-lg p-3 sm:p-4 ${isSelected ? "ring-2 ring-[var(--highlight)]" : ""}`}
+              >
+                <div className="flex justify-between items-start gap-3">
                   <div>
-                    <div className="text-lg font-semibold">{p.name}</div>
-                    <div className="text-sm text-gray-600">{p.price}</div>
-                    <div className="text-sm text-gray-700 mt-1">{p.short}</div>
+                    <div className="text-base sm:text-lg font-semibold">{p.name}</div>
+                    <div className="text-xs sm:text-sm text-gray-600">{p.price}</div>
+                    <div className="text-xs sm:text-sm text-gray-700 mt-1">{p.short}</div>
                   </div>
                   <button
                     aria-label="Zobraziť detaily"
-                    className="w-7 h-7 rounded-full border flex items-center justify-center text-sm"
+                    className="min-w-7 w-7 h-7 rounded-full border flex items-center justify-center text-xs"
                     onClick={() => setExpandedInfo(isOpen ? null : p.key)}
                     title="Info"
                   >
@@ -274,7 +291,7 @@ export default function CustomerPage() {
                 </div>
 
                 {isOpen && (
-                  <div className="mt-3 text-sm text-gray-700 space-y-1">
+                  <div className="mt-3 text-xs sm:text-sm text-gray-700 space-y-1">
                     <p>{p.description}</p>
                     <ul className="list-disc ml-5">
                       {p.details.map((d) => (
@@ -284,9 +301,11 @@ export default function CustomerPage() {
                   </div>
                 )}
 
-                <div className="mt-4">
+                <div className="mt-3 sm:mt-4">
                   <button
-                    className={`w-full py-2 rounded border ${isSelected ? "bg-[var(--highlight)] text-black" : "bg-white"}`}
+                    className={`w-full py-2 rounded border text-sm sm:text-base ${
+                      isSelected ? "bg-[var(--highlight)] text-black" : "bg-white"
+                    }`}
                     onClick={() => setSelectedPackage(p.key)}
                   >
                     Vybrať
@@ -298,13 +317,17 @@ export default function CustomerPage() {
         </div>
       </section>
 
-      {error && <div className="text-red-600">{error}</div>}
+      {error && <div className="text-red-600 text-sm sm:text-base">{error}</div>}
 
       <div className="flex justify-center">
         <button
           onClick={createReservation}
           disabled={submitting}
-          className="w-80 px-4 py-2 bg-[var(--highlight)] text-black rounded font-semibold disabled:opacity-60"
+          className="
+            w-full max-w-[260px]
+            px-4 py-2 bg-[var(--highlight)] text-black rounded font-semibold
+            disabled:opacity-60 text-sm sm:text-base
+          "
         >
           {submitting ? "Vytváram..." : "Vytvoriť záväznú objednávku"}
         </button>

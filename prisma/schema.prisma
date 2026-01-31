@@ -26,8 +26,9 @@ model Invitation {
   email       String
   expiresAt   DateTime
   used        Boolean  @default(false)
-  createdById String?  @db.Uuid
-  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdById String   @db.Uuid
+  role        Role     @default(CUSTOMER)
+  createdBy   User     @relation(fields: [createdById], references: [id])
 
   @@index([createdById])
 }

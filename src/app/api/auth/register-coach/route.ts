@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
                 email: invitation.email,
                 password: hashed,
                 name: body.name,
-                role: Role.COACH,
+                role: Role.COACH
             },
         }),
         prisma.invitation.update({

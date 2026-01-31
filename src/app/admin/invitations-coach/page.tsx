@@ -24,7 +24,7 @@ export default async function AdminInvitationsPageCoach() {
     return (
         <div className="max-w-md mx-auto p-6 mt-50 space-y-4">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Pozvať zákazníka</h1>
+                <h1 className="text-2xl font-bold">Pozvať trénera</h1>
                 <LogoutButton callbackUrl="/auth/signin" />
             </div>
 

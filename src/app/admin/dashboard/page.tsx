@@ -46,6 +46,13 @@ export default async function AdminDashboardPage() {
                     Pozvať zákazníka
                 </Link>
 
+                <Link
+                    href="/admin/invitations-coach"
+                    className="px-4 py-2 rounded bg-[var(--highlight)] text-black font-semibold"
+                >
+                    Pozvať trénera
+                </Link>
+
 
 
                 <div className="space-y-4">

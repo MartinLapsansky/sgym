@@ -56,8 +56,8 @@ export default function Home() {
       {/*    S - Gym fitness*/}
       {/*  </h1>*/}
           <Link href="/auth/signin"
-              className="inline-flex items-center justify-center rounded-full px-8 py-4
-                       text-5xl sm:text-6xl font-semibold
+              className="inline-flex items-center justify-center text-center rounded-full px-8 py-4
+                       text-4xl sm:text-6xl font-semibold
                        text-black bg-[var(--highlight)] hover:bg-[#b8925f]
                        transition-colors shadow-[0_10px_25px_rgba(0,0,0,0.35)]
                        focus:outline-none focus:ring-4 focus:ring-[var(--highlight)]/40

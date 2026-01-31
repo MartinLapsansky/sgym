@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         html: `
       <h2>Si pozvaný</h2>
       <p>Klikni na link:</p>
-      <a href="https://s-gym.sk/invite/${token}">
+      <a href="${process.env.NEXT_PUBLIC_SITE_URL}/auth/register/?token=${token}">
         Prijať pozvánku
       </a>
     `,

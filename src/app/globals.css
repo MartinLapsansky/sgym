@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --hero-font: "Playfair Display", serif;
+}
+
+.hero-script {
+  font-family: "Great Vibes", cursive;
+  letter-spacing: 0.5px;
+}
+
+@keyframes wobble {
+  0% { transform: rotate(0deg) scale(1); }
+  30% { transform: rotate(-1.2deg) scale(1.02); }
+  60% { transform: rotate(1.2deg) scale(1.02); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.hero-title:hover {
+  animation: wobble 600ms ease-in-out;
+}
+
+.hero-stroke {
+  -webkit-text-stroke: 1px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+:root {
+    --background: #1A1A1A;
+    --highlight: #C6A477;
+    --text: #FFFFFF;
+    --muted: #333333;
+    --light: #d7bfa0;
+}
+
+@theme{
+    --highlight: var(--highlight)
+}
+
+@theme inline {
+  /*--color-background: var(--background);*/
+}
+
+body {
+  font-family: 'Oswald', sans-serif;
+    /*background-color: #1A1A1A;*/
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* ak máš v body margin, zruš ho */
+body {
+  margin: 0;
+}
+
+p{
+    /*color: var(--text);*/
+}
+h1{
+}
+
+h2{
+    /*color: var(--highlight);*/
+    font-size: 5rem;
+    font-weight: bold;
+}
+button{
+    cursor: pointer;
+}

@@ -1,7 +1,6 @@
 // src/app/page.tsx
 import Home from "../components/Sections/Home";
 import Services from "../components/Sections/Services";
-import Contact from "../components/Sections/Contact";
 
 
 export default function HomePage() {

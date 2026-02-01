@@ -363,7 +363,7 @@ export default function CustomerPage() {
             }`}
             onClick={() => setCategory("MINI_ONE_CLIENT")}
           >
-            MINI (1 klient) Po/Str/Pia
+            MINI SKUPINY Po/Str/Pia
           </button>
           <button
             className={`px-3 py-2 border rounded text-sm sm:text-base ${

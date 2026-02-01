@@ -48,8 +48,8 @@ export async function POST(req: NextRequest) {
         to: email,
         subject: "Pozvánka do S-GYM",
         html: `
-      <h2>Si pozvaný</h2>
-      <p>Klikni na link:</p>
+      <h2>Ahoj, bol si pozvaný do S-GYM na vytvorenie objednávky.</h2>
+          <p>Klikni na tento link pre dokončenie registrácie:</p>
       <a href="${process.env.NEXT_PUBLIC_SITE_URL}/auth/register/?token=${token}">
         Prijať pozvánku
       </a>

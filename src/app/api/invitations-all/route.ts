@@ -49,10 +49,6 @@ export async function POST(req: NextRequest) {
             data: invitations,
         });
 
-
-
-
-    // 2️⃣ odoslanie emailov
     await Promise.all(
         invitations.map((invite) =>
             resend.emails.send({
@@ -60,8 +56,8 @@ export async function POST(req: NextRequest) {
                 to: invite.email,
                 subject: "Pozvánka do S-GYM",
                 html: `
-          <h2>Si pozvaný do S-GYM</h2>
-          <p>Klikni na link pre dokončenie registrácie:</p>
+          <h2>Ahoj, bol si pozvaný do S-GYM na vytvorenie objednávky.</h2>
+          <p>Klikni na tento link pre dokončenie registrácie:</p>
           <a href="${process.env.NEXT_PUBLIC_SITE_URL}/auth/register?token=${invite.token}">
             Prijať pozvánku
           </a>

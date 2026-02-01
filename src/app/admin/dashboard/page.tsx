@@ -38,17 +38,17 @@ export default async function AdminDashboardPage() {
                 </p>
             </div>
 
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col gap-3 justify-center">
                 <Link
                     href="/admin/invitations"
-                    className="px-4 py-2 rounded bg-[var(--highlight)] text-black font-semibold"
+                    className="text-center px-4 py-2 rounded bg-[var(--highlight)] text-black font-semibold"
                 >
                     Pozvať zákazníka
                 </Link>
 
                 <Link
                     href="/admin/invitations-coach"
-                    className="px-4 py-2 rounded bg-[var(--highlight)] text-black font-semibold"
+                    className="text-center px-4 py-2 rounded bg-[var(--highlight)] text-black font-semibold"
                 >
                     Pozvať trénera
                 </Link>
@@ -58,7 +58,7 @@ export default async function AdminDashboardPage() {
                 <div className="space-y-4">
                     <Link
                         href="/admin/reservations"
-                        className="inline-block px-4 py-2 border rounded font-semibold hover:bg-gray-50"
+                        className=" text-center inline-block px-4 py-2 border rounded font-semibold hover:bg-gray-50"
                     >
                         Zobraziť rezervácie
                     </Link>

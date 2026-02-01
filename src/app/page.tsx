@@ -7,7 +7,7 @@ export default function HomePage() {
     return (
         <div>
             <section id="domov"><Home /></section>
-            <section id="služby"><Services /></section>
+            {/*<section id="služby"><Services /></section>*/}
         </div>
     );
 }

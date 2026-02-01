@@ -7,7 +7,7 @@ import Image from "next/image";
 import logo from "../../app/assets/S gym.png"
 import {useRouter, usePathname} from "next/navigation";
 
-const sections = ["Domov","Služby"]
+// const sections = []
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,17 +79,17 @@ export default function Header() {
               </a>
             </div>
 
-            <nav className="hidden md:flex justify-center space-x-6 gap-6 w-full">
-              {sections.map((section) => (
-                <button
-                  key={section}
-                  onClick={() => scrollTo(section.toLowerCase())}
-                  className="text-gray-300 text-4xl hover:text-[var(--highlight)] transition-colors cursor-pointer"
-                >
-                  {section}
-                </button>
-              ))}
-            </nav>
+            {/*<nav className="hidden md:flex justify-center space-x-6 gap-6 w-full">*/}
+            {/*  {sections.map((section) => (*/}
+            {/*    <button*/}
+            {/*      key={section}*/}
+            {/*      onClick={() => scrollTo(section.toLowerCase())}*/}
+            {/*      className="text-gray-300 text-4xl hover:text-[var(--highlight)] transition-colors cursor-pointer"*/}
+            {/*    >*/}
+            {/*      {section}*/}
+            {/*    </button>*/}
+            {/*  ))}*/}
+            {/*</nav>*/}
 
             <button
               className="flex md:hidden text-2xl"
@@ -122,17 +122,17 @@ export default function Header() {
                   <FontAwesomeIcon icon={faTimes} />
                 </button>
               </div>
-              <nav className="flex-1 overflow-y-auto py-4">
-                {sections.map((section) => (
-                  <button
-                    key={section}
-                    onClick={() => scrollTo(section.toLowerCase())}
-                    className="block w-full text-center py-4 px-6 text-3xl text-gray-700 hover:bg-gray-200 transition-colors"
-                  >
-                    {section}
-                  </button>
-                ))}
-              </nav>
+              {/*<nav className="flex-1 overflow-y-auto py-4">*/}
+              {/*  {sections.map((section) => (*/}
+              {/*    <button*/}
+              {/*      key={section}*/}
+              {/*      onClick={() => scrollTo(section.toLowerCase())}*/}
+              {/*      className="block w-full text-center py-4 px-6 text-3xl text-gray-700 hover:bg-gray-200 transition-colors"*/}
+              {/*    >*/}
+              {/*      {section}*/}
+              {/*    </button>*/}
+              {/*  ))}*/}
+              {/*</nav>*/}
             </div>
           </div>
 

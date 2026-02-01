@@ -111,7 +111,96 @@ const MINI_PACKAGES = [
   },
 ];
 
-type Category = "GROUP" | "MINI";
+// NOVÉ: Mini skupina (1 klient) – Po/Str/Pia
+const MINI_ONE_CLIENT_PACKAGES = [
+  {
+    key: "BASIC",
+    name: "BASIC",
+    price: "105 € / mesiac",
+    short: "Do 5 tréningov (Po/Str/Pia)",
+    description: "Tréningové dni: pondelok / streda / piatok. Do 5 tréningov mesačne.",
+    details: ["Tréningové dni: Po/Str/Pia", "Počet tréningov: do 5", "Cena: 105 € / mesiac"],
+  },
+  {
+    key: "STANDARD",
+    name: "STANDARD",
+    price: "155 € / mesiac",
+    short: "Do 8 tréningov (Po/Str/Pia)",
+    description: "Tréningové dni: pondelok / streda / piatok. Do 8 tréningov mesačne.",
+    details: ["Tréningové dni: Po/Str/Pia", "Počet tréningov: do 8", "Cena: 155 € / mesiac"],
+  },
+  {
+    key: "FULL",
+    name: "NEOBMEDZENÝ",
+    price: "210 € / mesiac",
+    short: "Neobmedzený počet tréningov (Po/Str/Pia)",
+    description: "Tréningové dni: pondelok / streda / piatok. Neobmedzený vstup.",
+    details: ["Tréningové dni: Po/Str/Pia", "Počet tréningov: neobmedzený", "Cena: 210 € / mesiac"],
+  },
+];
+
+// NOVÉ: Individual – Duo
+const INDIVIDUAL_DUO_PACKAGES = [
+  {
+    key: "BASIC",
+    name: "BASIC",
+    price: "115 € / mesiac",
+    short: "Do 5 tréningov (DUO)",
+    description: "Individuálny tréning vo dvojici. Do 5 tréningov mesačne.",
+    details: ["Forma: duo", "Počet tréningov: do 5", "Cena: 115 € / mesiac"],
+  },
+  {
+    key: "STANDARD",
+    name: "STANDARD",
+    price: "175 € / mesiac",
+    short: "Do 8 tréningov (DUO)",
+    description: "Individuálny tréning vo dvojici. Do 8 tréningov mesačne.",
+    details: ["Forma: duo", "Počet tréningov: do 8", "Cena: 175 € / mesiac"],
+  },
+  {
+    key: "FULL",
+    name: "FULL",
+    price: "240 € / mesiac",
+    short: "Neobmedzene (DUO)",
+    description: "Individuálny tréning vo dvojici. Neobmedzený vstup.",
+    details: ["Forma: duo", "Počet tréningov: neobmedzený", "Cena: 240 € / mesiac"],
+  },
+];
+
+// NOVÉ: Individual – Single
+const INDIVIDUAL_SINGLE_PACKAGES = [
+  {
+    key: "BASIC",
+    name: "BASIC",
+    price: "130 € / mesiac",
+    short: "Do 5 tréningov (SINGLE)",
+    description: "Individuálny tréning 1:1. Do 5 tréningov mesačne.",
+    details: ["Forma: single", "Počet tréningov: do 5", "Cena: 130 € / mesiac"],
+  },
+  {
+    key: "STANDARD",
+    name: "STANDARD",
+    price: "205 € / mesiac",
+    short: "Do 8 tréningov (SINGLE)",
+    description: "Individuálny tréning 1:1. Do 8 tréningov mesačne.",
+    details: ["Forma: single", "Počet tréningov: do 8", "Cena: 205 € / mesiac"],
+  },
+  {
+    key: "FULL",
+    name: "FULL",
+    price: "280 € / mesiac",
+    short: "Neobmedzene (SINGLE)",
+    description: "Individuálny tréning 1:1. Neobmedzený vstup.",
+    details: ["Forma: single", "Počet tréningov: neobmedzený", "Cena: 280 € / mesiac"],
+  },
+];
+
+type Category =
+  | "GROUP"
+  | "MINI"
+  | "MINI_ONE_CLIENT" // Po/Str/Pia
+  | "INDIVIDUAL_DUO"
+  | "INDIVIDUAL_SINGLE";
 
 export default function CustomerPage() {
   const [trainers, setTrainers] = useState<Trainer[]>([]);
@@ -125,8 +214,8 @@ export default function CustomerPage() {
 
   const router = useRouter();
 
-
-    useEffect(() => {
+// ... existing code ...
+  useEffect(() => {
     let active = true;
     (async () => {
       try {
@@ -152,6 +241,7 @@ export default function CustomerPage() {
       active = false;
     };
   }, []);
+// ... existing code ...
 
   useEffect(() => {
     setSelectedPackage("");
@@ -193,7 +283,16 @@ export default function CustomerPage() {
     }
   };
 
-  const packages = category === "GROUP" ? GROUP_PACKAGES : MINI_PACKAGES;
+  const packages =
+    category === "GROUP"
+      ? GROUP_PACKAGES
+      : category === "MINI"
+      ? MINI_PACKAGES
+      : category === "MINI_ONE_CLIENT"
+      ? MINI_ONE_CLIENT_PACKAGES
+      : category === "INDIVIDUAL_DUO"
+      ? INDIVIDUAL_DUO_PACKAGES
+      : INDIVIDUAL_SINGLE_PACKAGES;
 
   return (
     <div
@@ -208,7 +307,7 @@ export default function CustomerPage() {
       <h1 className="text-2xl font-bold text-center sm:text-3xl">Vytvoriť objednávku</h1>
 
       <section className="space-y-3">
-        <p className="text-lg font-semibold sm:text-xl">Vyber trénera</p>
+        <p className="text-lg font-semibold sm:text-xl">Tréner</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           {trainers.map((t) => (
             <button
@@ -241,14 +340,14 @@ export default function CustomerPage() {
 
       <section className="space-y-2">
         <p className="text-lg font-semibold sm:text-xl">Typ skupiny</p>
-        <div className="flex gap-2 sm:gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <button
             className={`px-3 py-2 border rounded text-sm sm:text-base ${
               category === "GROUP" ? "bg-[var(--highlight)] text-black" : ""
             }`}
             onClick={() => setCategory("GROUP")}
           >
-            Veľké skupiny
+            MAXI SKUPINA
           </button>
           <button
             className={`px-3 py-2 border rounded text-sm sm:text-base ${
@@ -256,14 +355,46 @@ export default function CustomerPage() {
             }`}
             onClick={() => setCategory("MINI")}
           >
-            Mini skupiny
+            MINI SKUPINY (Ut/Št)
+          </button>
+          <button
+            className={`px-3 py-2 border rounded text-sm sm:text-base ${
+              category === "MINI_ONE_CLIENT" ? "bg-[var(--highlight)] text-black" : ""
+            }`}
+            onClick={() => setCategory("MINI_ONE_CLIENT")}
+          >
+            MINI (1 klient) Po/Str/Pia
+          </button>
+          <button
+            className={`px-3 py-2 border rounded text-sm sm:text-base ${
+              category === "INDIVIDUAL_DUO" ? "bg-[var(--highlight)] text-black" : ""
+            }`}
+            onClick={() => setCategory("INDIVIDUAL_DUO")}
+          >
+            INDIVIDUAL DUO
+          </button>
+          <button
+            className={`px-3 py-2 border rounded text-sm sm:text-base ${
+              category === "INDIVIDUAL_SINGLE" ? "bg-[var(--highlight)] text-black" : ""
+            }`}
+            onClick={() => setCategory("INDIVIDUAL_SINGLE")}
+          >
+            INDIVIDUAL SINGLE
           </button>
         </div>
       </section>
 
       <section className="space-y-3 sm:space-y-4">
         <p className="text-lg font-semibold sm:text-xl">
-          Balíčky – {category === "GROUP" ? "Veľké skupiny" : "Mini skupiny"}
+          {category === "GROUP"
+            ? "Balíčky – Veľké skupiny"
+            : category === "MINI"
+            ? "Balíčky – Mini skupiny (Ut/Št)"
+            : category === "MINI_ONE_CLIENT"
+            ? "Balíčky – Mini (1 klient) Po/Str/Pia"
+            : category === "INDIVIDUAL_DUO"
+            ? "Balíčky – Individual DUO"
+            : "Balíčky – Individual SINGLE"}
         </p>
         <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
           {packages.map((p) => {
@@ -317,7 +448,7 @@ export default function CustomerPage() {
         </div>
       </section>
 
-      {error && <div className="text-red-600 text-sm sm:text-base">{error}</div>}
+      {error && <div className="text-red-600 text-sm:text-base">{error}</div>}
 
       <div className="flex justify-center">
         <button

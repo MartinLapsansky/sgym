@@ -1,104 +1,208 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
-type ReservationItem = {
+type Reservation = {
   id: string;
-  notes: string | null;
-  email: string | null;
-  services: string[];
+  userId: string;
+  coachId?: string | null;
+  services: string[]; // ["CATEGORY:PLAN"]
+  notes?: string | null; // celé meno z customer stránky
+  status: string;
   createdAt: string;
 };
 
-export default function ReservationsList() {
-  const router = useRouter();
-  const [items, setItems] = useState<ReservationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+type Option = { value: string; label: string };
+
+const CATEGORY_OPTIONS: Option[] = [
+  { value: "", label: "Všetky kategórie" },
+  { value: "GROUP", label: "MAXI SKUPINA" },
+  { value: "MINI", label: "MINI (Ut/Št)" },
+  { value: "MINI_ONE_CLIENT", label: "MINI (1 klient) Po/Str/Pia" },
+  { value: "INDIVIDUAL_DUO", label: "INDIVIDUAL DUO" },
+  { value: "INDIVIDUAL_SINGLE", label: "INDIVIDUAL SINGLE" },
+];
+
+const PLAN_OPTIONS_BY_CATEGORY: Record<string, Option[]> = {
+  "": [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL" },
+    { value: "FULL_PLUS", label: "FULL_PLUS" },
+  ],
+  GROUP: [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL" },
+  ],
+  MINI: [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL" },
+    { value: "FULL_PLUS", label: "FULL_PLUS" },
+  ],
+  MINI_ONE_CLIENT: [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL / Neobmedzený" },
+  ],
+  INDIVIDUAL_DUO: [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL" },
+  ],
+  INDIVIDUAL_SINGLE: [
+    { value: "", label: "Všetky plány" },
+    { value: "BASIC", label: "BASIC" },
+    { value: "STANDARD", label: "STANDARD" },
+    { value: "FULL", label: "FULL" },
+  ],
+};
+
+function parseCategoryPlan(services: any): { category: string; plan: string } {
+    // DB má tvar "{CATEGORY:PLAN}"
+    const raw = Array.isArray(services) ? services[0] : services;
+    const cleaned = String(raw || "").replace(/[{}]/g, "").trim();
+    const [category = "", plan = ""] = cleaned.split(":");
+    return { category, plan };
+}
+
+export default function AdminReservationsPage() {
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const [category, setCategory] = useState<string>("");
+  const [plan, setPlan] = useState<string>("");
+
+  const planOptions = useMemo<Option[]>(() => {
+    return PLAN_OPTIONS_BY_CATEGORY[category ?? ""] ?? PLAN_OPTIONS_BY_CATEGORY[""];
+  }, [category]);
 
   useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        setError("");
-        setLoading(true);
-        const res = await fetch("/api/reservations?all=1", { cache: "no-store" });
-        const data: { reservations: Array<{
-          id: string;
-          notes?: string | null;
-          services?: string[];
-          createdAt: string;
-          user?: { email?: string | null } | null;
-        }> } = await res.json();
-        if (!res.ok) throw new Error((data as any)?.message || "Nepodarilo sa načítať rezervácie");
-        const rows: ReservationItem[] = (data?.reservations ?? []).map((r) => ({
-          id: r.id,
-          notes: r.notes ?? null,
-          email: r.user?.email ?? null,
-          services: r.services ?? [],
-          createdAt: r.createdAt,
-        }));
-        if (active) setItems(rows);
-      } catch (e) {
-        if (active) setError(e instanceof Error ? e.message : "Chyba pri načítaní");
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
+    // ak zmeníme kategóriu a aktuálny plán nie je v možnostiach, resetneme plán
+    if (!planOptions.some((o) => o.value === plan)) {
+      setPlan("");
+    }
+  }, [planOptions, plan]);
+
+  const fetchReservations = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const params = new URLSearchParams();
+      if (category) params.set("category", category);
+      if (plan) params.set("plan", plan);
+
+      const qs = params.toString();
+      const url = qs ? `/api/reservations?${qs}` : `/api/reservations`;
+
+      const res = await fetch(url, { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || "Nepodarilo sa načítať rezervácie");
+      setReservations(data?.reservations ?? []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Chyba pri načítaní rezervácií");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservations();
+  }, [category, plan]);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6 mt-30">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">Vytvorené rezervácie</h3>
-        <button
-          onClick={() => router.push("/admin/dashboard")}
-          className="px-3 py-2 border rounded font-semibold"
-        >
-          Späť na dashboard
-        </button>
-      </div>
+    <div className="mx-auto max-w-6xl px-4 py-8 space-y-6 mt-40">
+      <h1 className="text-2xl font-bold">Rezervácie</h1>
 
-      {loading && <div>Načítavam...</div>}
-      {error && <div className="text-red-600">{error}</div>}
-
-      {!loading && !error && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="text-left p-2 border">Meno</th>
-                <th className="text-left p-2 border">Email</th>
-                <th className="text-left p-2 border">Služba / Balík</th>
-                <th className="text-left p-2 border">Vytvorené</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((it) => (
-                <tr key={it.id} className="odd:bg-white even:bg-gray-50">
-                  <td className="p-2 border">{it.notes ?? "-"}</td>
-                  <td className="p-2 border">{it.email ?? "-"}</td>
-                  <td className="p-2 border">{it.services.join(", ") || "-"}</td>
-                  <td className="p-2 border">
-                    {new Date(it.createdAt).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-              {!items.length && (
-                <tr>
-                  <td className="p-3 border text-center" colSpan={4}>
-                    Zatiaľ žiadne rezervácie.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium">Kategória</label>
+          <select
+            className="border rounded px-3 py-2"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {CATEGORY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium">Plán</label>
+          <select className="border rounded px-3 py-2" value={plan} onChange={(e) => setPlan(e.target.value)}>
+            {planOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            className="px-4 py-2 border rounded"
+            onClick={() => {
+              setCategory("");
+              setPlan("");
+            }}
+          >
+            Reset
+          </button>
+          <button className="px-4 py-2 bg-[var(--highlight)] text-black rounded" onClick={fetchReservations}>
+            Obnoviť
+          </button>
+        </div>
+      </section>
+
+      {error && <div className="text-red-600">{error}</div>}
+      {loading && <div>Načítavam…</div>}
+
+      <section className="border rounded-md overflow-hidden">
+        <div className="grid grid-cols-5 gap-2 bg-gray-50 px-3 py-2 text-sm font-semibold">
+          <div>ID</div>
+          <div>Meno</div>
+          <div>Kategória</div>
+          <div>Plán</div>
+          <div>Vytvorené</div>
+        </div>
+
+        {reservations.length === 0 && !loading ? (
+          <div className="px-3 py-4">Žiadne rezervácie.</div>
+        ) : (
+          <ul className="divide-y">
+            {reservations.map((r) => {
+              const { category: cat, plan: pl } = parseCategoryPlan(r.services || []);
+              return (
+                <li key={r.id} className="grid grid-cols-5 gap-2 px-3 py-3 text-sm">
+                  <div className="truncate">{r.id}</div>
+                  <div className="truncate">{r.notes || "-"}</div>
+                  <div className="truncate">{cat || "-"}</div>
+                  <div className="truncate">{pl || "-"}</div>
+                  <div className="truncate">
+                    {new Date(r.createdAt).toLocaleString("sk-SK", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

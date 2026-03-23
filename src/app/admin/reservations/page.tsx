@@ -18,7 +18,7 @@ const CATEGORY_OPTIONS: Option[] = [
   { value: "", label: "Všetky kategórie" },
   { value: "GROUP", label: "MAXI SKUPINA" },
   { value: "MINI", label: "MINI (Ut/Št)" },
-  { value: "MINI_ONE_CLIENT", label: "MINI (1 klient) Po/Str/Pia" },
+  { value: "MINI_ONE_CLIENT", label: "MINI Po/Str/Pia" },
   { value: "INDIVIDUAL_DUO", label: "INDIVIDUAL DUO" },
   { value: "INDIVIDUAL_SINGLE", label: "INDIVIDUAL SINGLE" },
 ];

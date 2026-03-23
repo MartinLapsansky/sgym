@@ -110,7 +110,6 @@ export default function OrdersPage() {
             className="rounded-lg border border-gray-200 p-4 flex flex-col gap-2"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="font-medium">ID: {r.id}</span>
               <span className="text-sm rounded px-2 py-0.5 border">
                 {r.status}
               </span>
@@ -123,7 +122,7 @@ export default function OrdersPage() {
                 Platnosť 30 dní (do):{" "}
                 <span className="font-medium">{r.validUntilLabel}</span>{" "}
                 {r.isExpired ? (
-                  <span className="ml-2 text-red-600">(exspirované)</span>
+                  <span className="ml-2 text-red-600">(expirované)</span>
                 ) : (
                   <span className="ml-2 text-emerald-600">
                     (platné – {29 - r.daysSince + 1} dní zostáva)

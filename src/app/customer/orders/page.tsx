@@ -75,7 +75,7 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-3xl px-4 py-12 mt-30">
         <h1 className="text-2xl font-semibold mb-6">Moje objednávky</h1>
         <p>Načítavam…</p>
       </div>
@@ -84,7 +84,7 @@ export default function OrdersPage() {
 
   if (err) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-3xl px-4 py-12 mt-30">
         <h1 className="text-2xl font-semibold mb-6">Moje objednávky</h1>
         <p className="text-red-600">{err}</p>
       </div>
@@ -93,7 +93,7 @@ export default function OrdersPage() {
 
   if (!items.length) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mx-auto max-w-3xl px-4 py-12 mt-30">
         <h1 className="text-2xl font-semibold mb-6">Moje objednávky</h1>
         <p>Nemáš žiadne rezervácie.</p>
       </div>

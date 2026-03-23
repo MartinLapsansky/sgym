@@ -44,7 +44,7 @@ export default function SignInFormClient() {
     <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md bg-white/90 backdrop-blur p-6 sm:p-8 rounded-xl shadow-md">
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
-          Prihlásenie do rezervačného systému
+          Prihlásenie
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-4">

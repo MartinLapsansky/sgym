@@ -12,10 +12,12 @@ export default function SignInFormClient() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true)
 
     const res = await signIn("credentials", {
       email,
@@ -26,6 +28,7 @@ export default function SignInFormClient() {
 
     if (!res || res.error) {
       setError("Nesprávny email alebo heslo.");
+      setIsLoading(false);
       return;
     }
 
@@ -91,12 +94,15 @@ export default function SignInFormClient() {
               Zabudnuté heslo?
             </a>
           </div>
-
           <button
             type="submit"
-            className="mt-2 w-full py-3 px-4 bg-[var(--highlight)] text-black font-semibold rounded-lg hover:bg-[#b8925f] transition-colors"
+            disabled={isLoading}
+            className="mt-2 w-full py-3 px-4 bg-[var(--highlight)] text-black font-semibold rounded-lg hover:bg-[#b8925f] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Prihlásiť sa
+            {isLoading && (
+              <span className="h-5 w-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+            )}
+            {isLoading ? "Prihlasovanie..." : "Prihlásiť sa"}
           </button>
         </form>
 

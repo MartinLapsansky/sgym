@@ -64,6 +64,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Reset link sent." });
   } catch (error) {
+    console.error("forgot-password POST error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

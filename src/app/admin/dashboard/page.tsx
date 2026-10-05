@@ -33,9 +33,6 @@ export default async function AdminDashboardPage() {
                 <p>
                     <strong>Rola:</strong> {String(session.user.role)}
                 </p>
-                <p>
-                    <strong>User ID:</strong> {session.user.id}
-                </p>
             </div>
 
             <div className="flex flex-col gap-3 justify-center">
@@ -55,12 +52,19 @@ export default async function AdminDashboardPage() {
 
 
 
-                <div className="space-y-4">
+                <div className="space-y-4 space-x-3">
                     <Link
                         href="/admin/reservations"
                         className=" text-center inline-block px-4 py-2 border rounded font-semibold hover:bg-gray-50"
                     >
-                        Zobraziť rezervácie
+                        Zobraziť objednávky
+                    </Link>
+
+                    <Link
+                        href="/admin/users"
+                        className=" text-center inline-block px-4 py-2 border rounded font-semibold hover:bg-gray-50"
+                    >
+                        Zákazníci
                     </Link>
                 </div>
 

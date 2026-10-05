@@ -34,6 +34,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Neautorizované" }, { status: 401 });
     }
 
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id as string },
+      select: { canCreateReservation: true },
+    });
+
+    if (!currentUser?.canCreateReservation) {
+      return NextResponse.json(
+        { message: "Nemáte povolenie vytvárať rezervácie. Kontaktujte trénera." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const { coachId, fullName, package: pkg } = body || {};
 

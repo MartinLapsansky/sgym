@@ -6,6 +6,7 @@ declare module "next-auth" {
         user?: {
             id?: string;
             role?: Role;
+            canCreateReservation?: boolean;
             name?: string | null;
             email?: string | null;
         };
@@ -13,13 +14,15 @@ declare module "next-auth" {
 
     interface User {
         id: string,
-        role: Role
+        role: Role,
+        canCreateReservation: boolean
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
         id: string,
-        role: Role
+        role: Role,
+        canCreateReservation: boolean
     }
 }

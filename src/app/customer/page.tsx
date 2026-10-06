@@ -9,7 +9,7 @@ import { ProfileButton } from "./ProfileButton";
 export default async function CustomerHome() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) {
+  if (!session?.user?.id || session.user.role !== "CUSTOMER") {
     redirect("/auth/signin?callbackUrl=%2Fcustomer");
   }
 

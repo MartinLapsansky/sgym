@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import {useState, type FormEvent, useCallback, useEffect} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   CATEGORY_OPTIONS,
@@ -8,6 +8,7 @@ import {
   type Filters,
   type Reservation,
 } from "./constants";
+import {useDebounce} from "@/hooks/useDebounce";
 
 
 function parseCategoryPlan(services: Reservation["services"]): {
@@ -37,10 +38,12 @@ export default function ReservationsClient({
   const pathname = usePathname();
 
   const [nameInput, setNameInput] = useState(filters.name);
+  const debouncedName = useDebounce(nameInput, 300);
+
 
   const planOptions = PLAN_OPTIONS_BY_CATEGORY[filters.category] ?? PLAN_OPTIONS_BY_CATEGORY[""];
 
-  function buildQuery(next: Partial<Filters>, extra?: { page?: number }): string {
+  const buildQuery = useCallback((next: Partial<Filters>, extra?: { page?: number }): string => {
     const merged: Filters = { ...filters, ...next };
     const params = new URLSearchParams();
 
@@ -55,7 +58,7 @@ export default function ReservationsClient({
 
     const qs = params.toString();
     return qs ? `${pathname}?${qs}` : pathname;
-  }
+  },[filters,pathname])
 
   function navigate(next: Partial<Filters>) {
     router.push(buildQuery(next));
@@ -73,11 +76,6 @@ export default function ReservationsClient({
     navigate({ category: value, plan: nextPlan });
   }
 
-  function handleNameSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    navigate({ name: nameInput.trim() });
-  }
-
   function handleFromChange(value: string) {
     navigate(value ? { from: value, month: "" } : { from: "" });
   }
@@ -90,6 +88,14 @@ export default function ReservationsClient({
     setNameInput("");
     router.push(pathname);
   }
+
+  //debounce effect search
+  useEffect(() => {
+    const trimmed = debouncedName.trim();
+    if (trimmed === filters.name) return;
+
+    router.push(buildQuery({ name: trimmed }));
+  }, [debouncedName, filters.name, buildQuery, router]);
 
   async function handleSendEmail() {
     try {
@@ -190,9 +196,8 @@ export default function ReservationsClient({
           </select>
         </div>
 
-        <form
+        <div
           className="flex flex-col gap-2 md:col-span-2"
-          onSubmit={handleNameSubmit}
         >
           <label className="text-sm font-medium">Meno (vyhľadávanie)</label>
           <input
@@ -202,7 +207,7 @@ export default function ReservationsClient({
             onChange={(e) => setNameInput(e.target.value)}
             className="border rounded px-3 py-2"
           />
-        </form>
+        </div>
 
         <div className="flex flex-col gap-2 md:col-span-1">
           <label className="text-sm font-medium">Od dátumu</label>

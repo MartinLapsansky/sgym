@@ -3,29 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {Resend} from "resend";
-
-// export async function GET() {
-//     const session = await getServerSession(authOptions);
-//     if (!session?.user?.id) {
-//         return NextResponse.json({ message: "Neautorizované" }, { status: 401 });
-//     }
-//
-//     try {
-//         const reservations = await prisma.reservation.findMany({
-//             orderBy: { createdAt: "desc" },
-//             include: { user: { select: { name: true, email: true } } },
-//         });
-//         // ... existing code ...
-//         // mapneme notes -> name, aby klient dostal name z notes
-//         const mapped = reservations.map((r) => ({
-//       ...r,
-//       name: r.notes ?? null,
-//     }));
-//     return NextResponse.json({ reservations: mapped });
-//   } catch (e: any) {
-//     return NextResponse.json({ message: e?.message ?? "Server error" }, { status: 500 });
-//     }
-// }
+import {getReservations} from "@/lib/reservations";
 
 export async function POST(req: Request) {
   try {
@@ -153,63 +131,17 @@ export async function GET(req: Request) {
             return NextResponse.json({ reservations }, { status: 200 });
         }
 
-        const category = searchParams.get("category") || "";
-        const plan = searchParams.get("plan") || "";
-        const name = (searchParams.get("name") || "").trim();
-        const from = searchParams.get("from"); // ISO date (YYYY-MM-DD)
-        const month = searchParams.get("month"); // YYYY-MM
-
-        const where: any = {};
-
-        if (name) {
-            where.notes = { contains: name, mode: "insensitive" };
+        const filters = {
+            category: searchParams.get("category") || "",
+            plan: searchParams.get("plan") || "",
+            name:  searchParams.get("name") || "",
+            from:  searchParams.get("from") || "", // ISO date (YYYY-MM-DD)
+            month: searchParams.get("month") || "" // YYYY-MM
         }
 
-        // Date filters
-        if (from) {
-            const fromDate = new Date(from);
-            if (!isNaN(fromDate.getTime())) {
-                where.createdAt = { ...(where.createdAt ?? {}), gte: fromDate };
-            }
-        } else if (month) {
-            // month in format YYYY-MM -> range [YYYY-MM-01, next month)
-            const [y, m] = month.split("-").map((v) => parseInt(v, 10));
-            if (!isNaN(y) && !isNaN(m) && m >= 1 && m <= 12) {
-                const start = new Date(y, m - 1, 1, 0, 0, 0, 0);
-                const end = new Date(y, m, 1, 0, 0, 0, 0);
-                where.createdAt = { gte: start, lt: end };
-            }
-        }
-        const reservations = await prisma.reservation.findMany({
-            where,
-            orderBy: { createdAt: "desc" },
-            include: { user: { select: { name: true, email: true } } },
-        });
+        const reservations = await getReservations(filters);
 
-        const normalize = (v: unknown) =>
-            String(v || "")
-                .replace(/[{}]/g, "")
-                .replace(/\s+/g, "")
-                .toUpperCase();
-
-        const target =
-            category && plan
-                ? `${category}:${plan}`
-                : category
-                    ? `${category}:`
-                    : plan
-                        ? `:${plan}`
-                        : "";
-
-        const filtered =
-            target
-                ? reservations.filter((r: any) => {
-                    const s = normalize(r.services);
-                    return s.includes(target);
-                })
-                : reservations;
-
-        return NextResponse.json({ reservations: filtered }, { status: 200 });
+        return NextResponse.json({ reservations}, { status: 200 });
     } catch (e) {
         const message = e instanceof Error ? e.message : "Server error";
         return NextResponse.json({ message }, { status: 500 });
